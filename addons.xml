@@ -2,7 +2,7 @@
 <addons>
 <addon id="plugin.video.tnp.hdplay"
        name="HDPlay"
-       version="1.8.13"
+       version="1.0.0"
        provider-name="HDrepo">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
@@ -22,9 +22,9 @@
 
 
 <addon
-	id="repository.hdplay"
+	id="repository.thanhnguyenphu"
 	version="1.0.0"
-	name="[COLOR blue][B]HDPLAY Repository[/B][/COLOR]"
+	name="[COLOR blue][B]ThanhNguyenPhu Repository[/B][/COLOR]"
 	provider-name="thanhnguyenphu">
 	<requires>
 		<import addon="xbmc.addon" version="12.0.0"/>
