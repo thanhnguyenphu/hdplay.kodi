@@ -10,9 +10,9 @@
 	</requires>
 	<extension point="xbmc.addon.repository"
 		name="[COLOR blue][B]HDPLAY Repository[/B][/COLOR]">
-		<info compressed="true">https://raw.github.com/thanhnguyenphu/hdplay/master/addons.xml</info>
-		<checksum>https://raw.github.com/thanhnguyenphu/hdplay/master/addons.xml.md5</checksum>
-		<datadir zip="true">https://github.com/thanhnguyenphu/hdplay/raw/master/zips/</datadir>
+		<info compressed="true">https://raw.github.com/thanhnguyenphu/hdplay.kodi/master/addons.xml</info>
+		<checksum>https://raw.github.com/thanhnguyenphu/hdplay.kodi/master/addons.xml.md5</checksum>
+		<datadir zip="true">https://github.com/thanhnguyenphu/hdplay.kodi/raw/master/zips/</datadir>
 	</extension>
 	<extension point="xbmc.addon.metadata">
 		<summary lang="en">Install addon from HDPLAY's repository</summary>
