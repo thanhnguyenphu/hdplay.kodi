@@ -10,7 +10,7 @@ import re
 import json
 from BeautifulSoup import BeautifulSoup
 
-__settings__ = xbmcaddon.Addon(id='plugin.video.hdplay')
+__settings__ = xbmcaddon.Addon(id='plugin.video.tnp.hdplay')
 __language__ = __settings__.getLocalizedString
 home = __settings__.getAddonInfo('path')
 icon = xbmc.translatePath( os.path.join( home, 'icon.png' ) )
