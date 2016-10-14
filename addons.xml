@@ -15,25 +15,6 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.tnp.hdplay"
-       name="[COLOR blue][B]HDPlay[/B][/COLOR]"
-       version="1.0.4"
-       provider-name="HDrepo">
-	<requires>
-		<import addon="script.module.simple.downloader" version="1.9.4" />
-	</requires>
-    <extension point="xbmc.python.pluginsource"
-               library="default.py">
-        <provides>video</provides>
-    </extension>
-    <extension point="xbmc.addon.metadata">
-        <platform>all</platform>
-        <language>en</language>
-		<summary lang="en">TV online</summary>
-		<description lang="en">Cám ơn trungk43 - Tác giả của addon HDplay, thanh51 chỉnh lý bổ sung các kênh TV</description>
-    </extension>
-</addon>
-
 <addon id="plugin.video.tnp.mediashare"
        name="[COLOR blue][B]MediaShare[/B][/COLOR]"
        version="1.0.0"
