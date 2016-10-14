@@ -35,6 +35,36 @@
     </extension>
 </addon>
 
+<addon id="plugin.video.tnp.mediashare"
+       name="[COLOR blue][B]MediaShare[/B][/COLOR]"
+       version="1.0.0"
+       provider-name="Shani 2.7.0, thanh51">
+  <requires>
+    <import addon="xbmc.python" version="2.1.0"/>
+    <import addon="script.module.beautifulsoup" version="3.2.1"/>
+    <import addon="script.module.simple.downloader" version="0.9.4"/>
+    <import addon="script.module.beautifulsoup4" />
+    <import addon="script.module.requests" />
+    <import addon="script.module.httplib2" />
+    <import addon="script.module.liveresolver" version="0.1.24" optional="true"/>
+    <import addon="script.module.youtube.dl" optional="true"/>
+    <import addon="plugin.video.youtube" optional="true" />
+    <import addon="script.module.urlresolver" optional="true"/>
+    <import addon="script.module.simplejson" />
+     <import addon="script.module.livestreamer" optional="true"/>
+     <import addon="script.module.pyamf" optional="true"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="default.py">
+    <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary>Kênh giải trí tổng hợp</summary>
+    <description>thanh51 chỉnh lý tổng hợp các kênh</description>
+    <disclaimer>[COLOR orangered]Các kênh được phổ biến miễn phí trên internet. Chúng tôi không chịu mọi trách nhiệm pháp lý.[/COLOR]</disclaimer>
+    <platform>all</platform>
+  </extension>
+</addon>
+
 <addon id="repository.shani" name="Shanis Addon Repository" version="2.9" provider-name="Shani">
 	<extension point="xbmc.addon.repository" name="Shanis Addon Repository">
         <dir>
