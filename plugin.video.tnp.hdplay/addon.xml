@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.tnp.hdplay" name="[COLOR blue][B]HDPlay[/B][/COLOR]" version="1.0.5" provider-name="thanh51">
+	<requires> 
+	</requires>
+	<extension point="xbmc.python.pluginsource" library="default.py">
+		<provides>video</provides>
+	</extension>
+	<extension point="xbmc.addon.metadata">
+		<summary>TV online.</summary>
+		<description>thanh51 chỉnh lý tổng hợp các kênh.</description>
+		<disclaimer>[COLOR orangered]Các kênh được phổ biến miễn phí trên internet. Chúng tôi không chịu mọi trách nhiệm pháp lý.[/COLOR]</disclaimer>
+		<platform>all</platform>
+	</extension>
+</addon>

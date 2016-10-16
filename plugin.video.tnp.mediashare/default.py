@@ -52,6 +52,7 @@ favorites = os.path.join(profile, 'favorites')
 history = os.path.join(profile, 'history')
 REV = os.path.join(profile, 'list_revision')
 icon = os.path.join(home, 'icon.png')
+hdpicon = os.path.join(home, 'hdplay.png')
 FANART = os.path.join(home, 'fanart.jpg')
 source_file = os.path.join(home, 'source_file')
 functions_dir = profile
@@ -66,6 +67,16 @@ if os.path.exists(source_file)==True:
     SOURCES = open(source_file).read()
 else: SOURCES = []
 
+# If not exist, install repository.thanhnguyenphu
+try:
+	import zipfile
+	ReposFolder = xbmc.translatePath('special://home/addons')
+	if not os.path.isdir(os.path.join(ReposFolder, 'repository.thanhnguyenphu')):
+		zip = zipfile.ZipFile(os.path.join(home, 'repository.thanhnguyenphu.zip'), 'r')
+		zip.extractall(ReposFolder)
+		zip.close()
+except:
+	pass
 
 def addon_log(string):
     if debug == 'true':
@@ -108,6 +119,9 @@ def makeRequest(url, headers=None):
                 xbmc.executebuiltin("XBMC.Notification(MediaShare,We failed to reach a server. - "+str(e.reason)+",10000,"+icon+")")
 
 def getSources():
+
+        addDir('[COLOR yellow][B]Go to [COLOR blue][B]HDPlay[/B][/COLOR]','plugin://plugin.video.tnp.hdplay',None,hdpicon,FANART,'','','','')
+
         try:
             if os.path.exists(favorites) == True:
                 addDir('Favorites','url',4,os.path.join(home, 'resources', 'favorite.png'),FANART,'','','','')
@@ -2446,6 +2460,8 @@ def addDir(name,url,mode,iconimage,fanart,description,genre,date,credits,showcon
         else:
             liz.setInfo(type="Video", infoLabels= allinfo)
         liz.setProperty("Fanart_Image", fanart)
+        if "plugin.video.tnp" in url:
+            u = url
         if showcontext:
             contextMenu = []
             parentalblock =addon.getSetting('parentalblocked')
