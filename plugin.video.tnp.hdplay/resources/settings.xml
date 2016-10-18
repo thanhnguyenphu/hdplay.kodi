@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<settings>
+	<category label="Tùy Chọn">
+		<setting id="ViewMode" label="Chọn chế độ hiển thị" type="labelenum" values="List|Thumbnail|Poster wrap" default="List"/>
+	</category>
+</settings>
