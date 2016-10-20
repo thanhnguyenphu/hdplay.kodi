@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-import urllib
-import urllib2
 import re
 import os
+import urllib
+import urllib2
+import shutil
 import xbmcplugin
 import xbmcgui
 import xbmcaddon
@@ -52,7 +53,8 @@ favorites = os.path.join(profile, 'favorites')
 history = os.path.join(profile, 'history')
 REV = os.path.join(profile, 'list_revision')
 icon = os.path.join(home, 'icon.png')
-hdpicon = os.path.join(home, 'hdplay.png')
+hdpicon = os.path.join(home, 'thumbnails', 'hdplay.png')
+settingsicon = os.path.join(home, 'thumbnails', 'settings.png')
 FANART = os.path.join(home, 'fanart.jpg')
 source_file = os.path.join(home, 'source_file')
 functions_dir = profile
@@ -69,14 +71,14 @@ else: SOURCES = []
 
 # If not exist, install repository.thanhnguyenphu
 try:
-	import zipfile
-	ReposFolder = xbmc.translatePath('special://home/addons')
-	if not os.path.isdir(os.path.join(ReposFolder, 'repository.thanhnguyenphu')):
-		zip = zipfile.ZipFile(os.path.join(home, 'repository.thanhnguyenphu.zip'), 'r')
-		zip.extractall(ReposFolder)
-		zip.close()
+    import zipfile
+    ReposFolder = xbmc.translatePath('special://home/addons')
+    if not os.path.isdir(os.path.join(ReposFolder, 'repository.thanhnguyenphu')):
+        zip = zipfile.ZipFile(os.path.join(home, 'repository.thanhnguyenphu.zip'), 'r')
+        zip.extractall(ReposFolder)
+        zip.close()
 except:
-	pass
+    pass
 
 def addon_log(string):
     if debug == 'true':
@@ -118,9 +120,37 @@ def makeRequest(url, headers=None):
                 addon_log('Reason: %s' %e.reason)
                 xbmc.executebuiltin("XBMC.Notification(MediaShare,We failed to reach a server. - "+str(e.reason)+",10000,"+icon+")")
 
+
+def addon_settings():
+    clear_cache()
+    addon.openSettings()
+    sys.exit(0)
+
+def clear_cache():  #### plugin.video.xbmchubmaintenance ####
+    try:
+        xbmc_cache_path = xbmc.translatePath('special://temp')
+        if os.path.exists(xbmc_cache_path) == True:
+            for root, dirs, files in os.walk(xbmc_cache_path):
+                file_count = 0
+                file_count += len(files)
+                if file_count > 0:
+                    for f in files:
+                        try:
+                            os.unlink(os.path.join(root, f))
+                        except:
+                            pass
+                    for d in dirs:
+                        try:
+                            shutil.rmtree(os.path.join(root, d))
+                        except:
+                            pass
+    except:
+        pass
+
 def getSources():
 
         addDir('[COLOR yellow][B]Go to [COLOR blue][B]HDPlay[/B][/COLOR]','plugin://plugin.video.tnp.hdplay',None,hdpicon,FANART,'','','','')
+        addDir('[COLOR cyan][B]Add-on Settings [/B][/COLOR][B]and [/B][COLOR lime][B]Auto Clear Cache[/B][/COLOR]','AddonSettings',99,settingsicon,FANART,'','','','')
 
         try:
             if os.path.exists(favorites) == True:
@@ -3176,7 +3206,8 @@ elif mode==56:
     addon.setSetting('parentalblocked', "true")
     xbmc.executebuiltin("XBMC.Notification(MediaShare,Parental block enabled,5000,"+icon+")")
     xbmcplugin.endOfDirectory(int(sys.argv[1]))
-
+elif mode==99:
+    addon_settings()
 elif mode==53:
     addon_log("Requesting JSON-RPC Items")
     pluginquerybyJSON(url)

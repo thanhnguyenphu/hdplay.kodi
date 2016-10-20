@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<items>
+
+<item>
+<title>Cinemax</title>         
+<link>http://118.69.252.4/tv3/Cinemax/index.m3u8</link>
+<thumbnail>http://some/place.png</thumbnail>
+</item>
+
+<item>
+<title>Bac Giang</title>         
+<link>http://210.245.18.144:8081/spsklfl/_definst_/bacgiang.360p.stream/chunklist.m3u8</link>
+<thumbnail>http://some/place.jpg</thumbnail>
+</item>
+
+</items>

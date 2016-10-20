@@ -1,7 +1,7 @@
 ﻿#!/usr/bin/python
 #coding=utf-8
 
-import os, re, urllib, urllib2, zipfile
+import os, re, urllib, urllib2, shutil, zipfile
 import xbmc, xbmcplugin, xbmcgui, xbmcaddon
 
 addon = xbmcaddon.Addon(id='plugin.video.tnp.hdplay')
@@ -13,7 +13,7 @@ thumbnails = xbmc.translatePath(os.path.join(home, 'thumbnails'))
 ms_icon = os.path.join(thumbnails, 'mediashare.png')
 settings_icon = os.path.join(thumbnails, 'settings.png')
 
-baseurl = 'https://raw.githubusercontent.com/thanh51/repository.thanh51/master/PlaylistHDplay.xml'
+baseurl = 'http://textuploader.com/d544e/raw'
 
 # If not exist, install repository.thanhnguyenphu
 try:
@@ -50,33 +50,74 @@ def make_request(url, headers=None):
 
 def get_categories():
 
-	add_dir('[COLOR yellow][B]Go to [COLOR blue][B]MediaShare[/B][/COLOR]', 'plugin://plugin.video.tnp.mediashare', None, ms_icon, fanart)
-	add_dir('[COLOR lime][B]Add-on Settings[/B][/COLOR]', 'AddonSettings', 1, settings_icon, fanart)
+	add_dir('[COLOR yellow][B]Go to [/B][/COLOR][COLOR blue][B]MediaShare[/B][/COLOR]', 'plugin://plugin.video.tnp.mediashare', None, ms_icon, fanart)
+	add_dir('[COLOR lime][B]Cài Đặt [/B][/COLOR][B]và [/B][COLOR cyan][B]Tự Động Xoá Cache[/B][/COLOR]', 'AddonSettings', 1, settings_icon, fanart)
 
 	content = make_request(baseurl)
-	content = ''.join(content.splitlines()).replace('\t', '')
-	match = re.compile('<item>(.+?)</item>').findall(content)
-	for item in match:
-		title = ""
-		link = ""
-		thumb = ""
-		if '<title>' in item:
-			title = re.compile('<title>(.+?)</title>').findall(item)[0].strip()
-		if '<link>' in item:
-			link = re.compile('<link>(.*?)</link>').findall(item)[0].strip()
-		if '<thumbnail>' in item:
-			thumb = re.compile('<thumbnail>(.*?)</thumbnail>').findall(item)[0].strip()
-		if thumb.startswith('http'):
-			thumb = thumb
-		elif thumb == 'icon':
-			thumb = icon
-		else:
-			thumb = '%s%s' % (os.path.join(xbmc.translatePath('special://home/addons/plugin.video.tnp.hdplay/thumbnails'), thumb), '.png')
-		add_link(title, link, thumb, fanart)
+	if baseurl.endswith('xml'):
+		content = ''.join(content.splitlines()).replace('\t', '')
+		match = re.compile('<item>(.+?)</item>').findall(content)
+		for item in match:
+			title = ""
+			link = ""
+			thumb = ""
+			if '<title>' in item:
+				title = re.compile('<title>(.+?)</title>').findall(item)[0].strip()
+			if '<link>' in item:
+				link = re.compile('<link>(.*?)</link>').findall(item)[0].strip()
+			if '<thumbnail>' in item:
+				thumb = re.compile('<thumbnail>(.*?)</thumbnail>').findall(item)[0].strip()
+			if thumb.startswith('http'):
+				thumb = thumb
+			elif thumb == 'icon':
+				thumb = icon
+			else:
+				thumb = '%s%s' % (os.path.join(xbmc.translatePath('special://home/addons/plugin.video.tnp.hdplay/thumbnails'), thumb), '.png')
+			add_link(title, link, thumb, fanart)
+	else:
+		m3u_regex = '#(.+?),(.+)\s*(.+)\s*'
+		m3u_thumb_regex = 'tvg-logo=[\'"](.*?)[\'"]'
+		group_title_regex = 'group-title=[\'"](.*?)[\'"]'
+		match = re.compile(m3u_regex).findall(content)
+		for thumb, title, link in match:
+			if 'tvg-logo' in thumb:
+				thumb = re.compile(m3u_thumb_regex).findall(str(thumb))[0].replace(' ', '%20')
+				if thumb.startswith('http'):
+					thumb = thumb
+				elif thumb == 'icon':
+					thumb = icon
+				else:
+					thumb = '%s%s' % (os.path.join(xbmc.translatePath('special://home/addons/plugin.video.tnp.hdplay/thumbnails'), thumb), '.png')
+			title = title.strip()
+			link = link.strip()
+			thumb = thumb.strip()
+			add_link(title, link, thumb, fanart)
 
 def addon_settings():
+	clear_cache()
 	addon.openSettings()
 	sys.exit(0)
+
+def clear_cache():  #### plugin.video.xbmchubmaintenance ####
+	try:
+		xbmc_cache_path = xbmc.translatePath('special://temp')
+		if os.path.exists(xbmc_cache_path) == True:
+			for root, dirs, files in os.walk(xbmc_cache_path):
+				file_count = 0
+				file_count += len(files)
+				if file_count > 0:
+					for f in files:
+						try:
+							os.unlink(os.path.join(root, f))
+						except:
+							pass
+					for d in dirs:
+						try:
+							shutil.rmtree(os.path.join(root, d))
+						except:
+							pass
+	except:
+		pass
 
 def resolve_url(url):
 	item = xbmcgui.ListItem(path=url)
@@ -89,7 +130,7 @@ def add_dir(name, url, mode, iconimage, fanart):
 	liz=xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=iconimage)
 	liz.setInfo(type="Video", infoLabels={"Title": name})
 	liz.setProperty("Fanart_Image", fanart)
-	if 'plugin.video.tnp' in url:
+	if 'plugin' in url:
 		u = url
 	ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
 	return ok

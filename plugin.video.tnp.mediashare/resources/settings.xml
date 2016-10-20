@@ -1,4 +1,7 @@
 ﻿<settings>
+  <category label="AutoStart">
+    <setting id="autostart" type="bool" label="Enable autostart" default="false" />
+  </category>
   <category label="General">
     <setting id="add_playlist" type="bool" label="Add items with multiple links as play lists"  default="false"/>
     <setting id="ask_playlist_items" type="bool" label="Ask playlist items to choose from dialog" default="false"/>
