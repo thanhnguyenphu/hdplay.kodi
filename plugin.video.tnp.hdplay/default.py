@@ -6,16 +6,18 @@ import xbmc, xbmcplugin, xbmcgui, xbmcaddon
 
 addon = xbmcaddon.Addon(id='plugin.video.tnp.hdplay')
 addon_version = addon.getAddonInfo('version')
+
 home = addon.getAddonInfo('path')
 icon = xbmc.translatePath(os.path.join(home, 'icon.png'))
 fanart = xbmc.translatePath(os.path.join(home, 'fanart.jpg'))
 thumbnails = xbmc.translatePath(os.path.join(home, 'thumbnails'))
-ms_icon = os.path.join(thumbnails, 'mediashare.png')
 settings_icon = os.path.join(thumbnails, 'settings.png')
+ms_icon = os.path.join(thumbnails, 'mediashare.png')
 
 baseurl = 'http://textuploader.com/d544e/raw'
 
-# If not exist, install repository.thanhnguyenphu
+# " If not exist, install repository.thanhnguyenphu "
+# " Nếu chưa có, cài repository.thanhnguyenphu "
 try:
 	ReposFolder = xbmc.translatePath('special://home/addons')
 	if not os.path.isdir(os.path.join(ReposFolder, 'repository.thanhnguyenphu')):
@@ -32,12 +34,14 @@ def make_request(url, headers=None):
 	if headers is None:
 			headers = {'User-agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:15.0) Gecko/20100101 Firefox/15.0.1',
 								 'Referer' : 'http://www.google.com'}
+
 	try:
 			req = urllib2.Request(url,headers=headers)
 			response = urllib2.urlopen(req)
 			content = response.read()
 			response.close()
 			return content
+
 	except urllib2.URLError, e:
 		addon_log('URL: '+url)
 		if hasattr(e, 'code'):
@@ -54,7 +58,28 @@ def get_categories():
 	add_dir('[COLOR lime][B]Cài Đặt [/B][/COLOR][B]và [/B][COLOR cyan][B]Tự Động Xoá Cache[/B][/COLOR]', 'AddonSettings', 1, settings_icon, fanart)
 
 	content = make_request(baseurl)
-	if baseurl.endswith('xml'):
+
+	if '#EXTINF' in content:
+		m3u_regex = '#(.+?),(.+)\s*(.+)\s*'
+		m3u_thumb_regex = 'tvg-logo=[\'"](.*?)[\'"]'
+		group_title_regex = 'group-title=[\'"](.*?)[\'"]'
+		match = re.compile(m3u_regex).findall(content)
+		for thumb, title, link in match:
+			if 'tvg-logo' in thumb:
+				thumb = re.compile(m3u_thumb_regex).findall(str(thumb))[0]
+				thumb = thumb.replace(' ', '%20').strip()
+				if thumb.startswith('http'):
+					thumb = thumb
+				elif thumb == 'icon.png':
+					thumb = icon
+				else:
+					thumb = os.path.join(thumbnails, thumb)
+			title = title.strip()
+			link = link.strip()
+			thumb = thumb.strip()
+			add_link(title, link, thumb, fanart)
+
+	else:
 		content = ''.join(content.splitlines()).replace('\t', '')
 		match = re.compile('<item>(.+?)</item>').findall(content)
 		for item in match:
@@ -69,28 +94,10 @@ def get_categories():
 				thumb = re.compile('<thumbnail>(.*?)</thumbnail>').findall(item)[0].strip()
 			if thumb.startswith('http'):
 				thumb = thumb
-			elif thumb == 'icon':
+			elif thumb == 'icon.png':
 				thumb = icon
 			else:
-				thumb = '%s%s' % (os.path.join(xbmc.translatePath('special://home/addons/plugin.video.tnp.hdplay/thumbnails'), thumb), '.png')
-			add_link(title, link, thumb, fanart)
-	else:
-		m3u_regex = '#(.+?),(.+)\s*(.+)\s*'
-		m3u_thumb_regex = 'tvg-logo=[\'"](.*?)[\'"]'
-		group_title_regex = 'group-title=[\'"](.*?)[\'"]'
-		match = re.compile(m3u_regex).findall(content)
-		for thumb, title, link in match:
-			if 'tvg-logo' in thumb:
-				thumb = re.compile(m3u_thumb_regex).findall(str(thumb))[0].replace(' ', '%20')
-				if thumb.startswith('http'):
-					thumb = thumb
-				elif thumb == 'icon':
-					thumb = icon
-				else:
-					thumb = '%s%s' % (os.path.join(xbmc.translatePath('special://home/addons/plugin.video.tnp.hdplay/thumbnails'), thumb), '.png')
-			title = title.strip()
-			link = link.strip()
-			thumb = thumb.strip()
+				thumb = os.path.join(thumbnails, thumb)
 			add_link(title, link, thumb, fanart)
 
 def addon_settings():

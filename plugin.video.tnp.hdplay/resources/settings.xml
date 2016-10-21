@@ -2,6 +2,6 @@
 <settings>
 	<category label="Tùy Chọn">
 		<setting id="ViewMode" label="Chọn chế độ hiển thị" type="labelenum" values="List|Thumbnail|Poster wrap" default="List"/>
-		<setting id="autostart" type="bool" label="Chọn tự động mở HDPlay khi chạy Kodi" default="false" />
+		<setting id="autostart" type="bool" label="Chọn tự động mở HDPlay khi khởi động Kodi" default="false" />
 	</category>
 </settings>
