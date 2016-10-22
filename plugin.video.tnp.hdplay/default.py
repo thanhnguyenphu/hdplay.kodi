@@ -14,7 +14,7 @@ thumbnails = xbmc.translatePath(os.path.join(home, 'thumbnails'))
 settings_icon = os.path.join(thumbnails, 'settings.png')
 ms_icon = os.path.join(thumbnails, 'mediashare.png')
 
-baseurl = 'http://textuploader.com/d544e/raw'
+baseurl = 'https://raw.githubusercontent.com/thanh51/repository.thanh51/master/PlaylistHDplay.m3u'
 
 # " If not exist, install repository.thanhnguyenphu "
 # " Nếu chưa có, cài repository.thanhnguyenphu "
