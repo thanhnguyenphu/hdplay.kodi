@@ -15,7 +15,7 @@
     </extension>
 </addon>
 
-<addon id="plugin.video.tnp.hdplay" name="[COLOR blue][B]HDPlay[/B][/COLOR]" version="1.0.9" provider-name="thanh51">
+<addon id="plugin.video.tnp.hdplay" name="[COLOR blue][B]HDPlay[/B][/COLOR]" version="1.0.10" provider-name="thanh51">
 	<requires>
 	</requires>
 	<extension point="xbmc.python.pluginsource" library="default.py">

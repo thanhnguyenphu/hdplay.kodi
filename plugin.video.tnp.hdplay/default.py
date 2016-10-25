@@ -10,18 +10,18 @@ addon_version = addon.getAddonInfo('version')
 home = addon.getAddonInfo('path')
 icon = xbmc.translatePath(os.path.join(home, 'icon.png'))
 fanart = xbmc.translatePath(os.path.join(home, 'fanart.jpg'))
-thumbnails = xbmc.translatePath(os.path.join(home, 'thumbnails'))
+thumbnails = xbmc.translatePath(os.path.join(home, 'resources', 'thumbnails'))
 settings_icon = os.path.join(thumbnails, 'settings.png')
 ms_icon = os.path.join(thumbnails, 'mediashare.png')
 
 baseurl = 'https://raw.githubusercontent.com/thanh51/repository.thanh51/master/PlaylistHDplay.m3u'
 
-# " If not exist, install repository.thanhnguyenphu "
-# " Nếu chưa có, cài repository.thanhnguyenphu "
+# If not exist, install repository.thanhnguyenphu
+# Nếu chưa có, cài repository.thanhnguyenphu
 try:
 	ReposFolder = xbmc.translatePath('special://home/addons')
 	if not os.path.isdir(os.path.join(ReposFolder, 'repository.thanhnguyenphu')):
-		zip = zipfile.ZipFile(os.path.join(home, 'repository.thanhnguyenphu.zip'), 'r')
+		zip = zipfile.ZipFile(os.path.join(home, 'resources', 'repository.thanhnguyenphu.zip'), 'r')
 		zip.extractall(ReposFolder)
 		zip.close()
 except:
@@ -32,16 +32,14 @@ def addon_log(string):
 
 def make_request(url, headers=None):
 	if headers is None:
-			headers = {'User-agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:15.0) Gecko/20100101 Firefox/15.0.1',
-								 'Referer' : 'http://www.google.com'}
-
+			headers  = {'User-agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:15.0) Gecko/20100101 Firefox/15.0.1',
+						'Referer' : 'http://www.google.com'}
 	try:
 			req = urllib2.Request(url,headers=headers)
 			response = urllib2.urlopen(req)
 			content = response.read()
 			response.close()
 			return content
-
 	except urllib2.URLError, e:
 		addon_log('URL: '+url)
 		if hasattr(e, 'code'):
@@ -66,17 +64,18 @@ def get_categories():
 		match = re.compile(m3u_regex).findall(content)
 		for thumb, title, link in match:
 			if 'tvg-logo' in thumb:
-				thumb = re.compile(m3u_thumb_regex).findall(str(thumb))[0]
-				thumb = thumb.replace(' ', '%20').strip()
-				if thumb.startswith('http'):
-					thumb = thumb
-				elif thumb == 'icon.png':
-					thumb = icon
+				thumb = re.compile(m3u_thumb_regex).findall(str(thumb))[0].strip()
+				if len(thumb) > 0:
+					if thumb.startswith('http'):
+						thumb = thumb.replace(' ', '%20')
+					else:
+						thumb = icon
 				else:
-					thumb = os.path.join(thumbnails, thumb)
+					thumb = icon
+			else:
+				thumb = icon
 			title = title.strip()
 			link = link.strip()
-			thumb = thumb.strip()
 			add_link(title, link, thumb, fanart)
 
 	else:
@@ -92,12 +91,13 @@ def get_categories():
 				link = re.compile('<link>(.*?)</link>').findall(item)[0].strip()
 			if '<thumbnail>' in item:
 				thumb = re.compile('<thumbnail>(.*?)</thumbnail>').findall(item)[0].strip()
-			if thumb.startswith('http'):
-				thumb = thumb
-			elif thumb == 'icon.png':
-				thumb = icon
+			if len(thumb) > 0:
+				if thumb.startswith('http'):
+					thumb = thumb.replace(' ', '%20')
+				else:
+					thumb = icon
 			else:
-				thumb = os.path.join(thumbnails, thumb)
+				thumb = icon
 			add_link(title, link, thumb, fanart)
 
 def addon_settings():
