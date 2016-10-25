@@ -53,10 +53,10 @@ favorites = os.path.join(profile, 'favorites')
 history = os.path.join(profile, 'history')
 REV = os.path.join(profile, 'list_revision')
 icon = os.path.join(home, 'icon.png')
-hdpicon = os.path.join(home, 'thumbnails', 'hdplay.png')
-settingsicon = os.path.join(home, 'thumbnails', 'settings.png')
+hdpicon = os.path.join(home, 'resources', 'thumbnails', 'hdplay.png')
+settingsicon = os.path.join(home, 'resources', 'thumbnails', 'settings.png')
 FANART = os.path.join(home, 'fanart.jpg')
-source_file = os.path.join(home, 'source_file')
+source_file = os.path.join(home, 'resources', 'source_file')
 functions_dir = profile
 
 communityfiles = os.path.join(profile, 'LivewebTV')
@@ -74,7 +74,7 @@ try:
     import zipfile
     ReposFolder = xbmc.translatePath('special://home/addons')
     if not os.path.isdir(os.path.join(ReposFolder, 'repository.thanhnguyenphu')):
-        zip = zipfile.ZipFile(os.path.join(home, 'repository.thanhnguyenphu.zip'), 'r')
+        zip = zipfile.ZipFile(os.path.join(home, 'resources', 'repository.thanhnguyenphu.zip'), 'r')
         zip.extractall(ReposFolder)
         zip.close()
 except:
