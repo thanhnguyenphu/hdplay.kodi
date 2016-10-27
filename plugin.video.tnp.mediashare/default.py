@@ -189,7 +189,11 @@ def getSources():
                                     genre = i['genre']
                                 if i.has_key('credits'):
                                     credits = i['credits']
-                                addDir(i['title'].encode('utf-8'),i['url'].encode('utf-8'),1,thumb,fanart,desc,genre,date,credits,'source')
+                                if 'ADULTS 18+' in i['title']:
+                                    if addon.getSetting('adult') == 'true':
+                                        addDir(i['title'].encode('utf-8'),i['url'].encode('utf-8'),1,thumb,fanart,desc,genre,date,credits,'source')
+                                else:
+                                    addDir(i['title'].encode('utf-8'),i['url'].encode('utf-8'),1,thumb,fanart,desc,genre,date,credits,'source')
                         except: traceback.print_exc()
                 else:
                     if len(sources) == 1:

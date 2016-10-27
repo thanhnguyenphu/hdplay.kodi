@@ -1,6 +1,6 @@
 ﻿<settings>
   <category label="AutoStart">
-    <setting id="autostart" type="bool" label="Enable autostart" default="false" />
+    <setting id="autostart" type="bool" label="Enable autostart MediaShare" default="false" />
   </category>
   <category label="General">
     <setting id="add_playlist" type="bool" label="Add items with multiple links as play lists"  default="false"/>
@@ -8,5 +8,8 @@
     <setting id="1080pquality" label="Play 1080p video ON demand if available (Not live)" type="bool" default=""/>
     <setting id="genesisorpulsar" type="enum" values="Genesis|Pulsar" label="Play IMDBid with:" default="Genesis"/>
     <setting id="donotshowbychannels" label="Do Not show items under channel name" type="bool" default="false"/>
+  </category>
+  <category label="[COLOR magenta]Adults[/COLOR]">
+    <setting id="adult" type="bool" label="[COLOR red][B]For Adults 18+[/B][/COLOR]" default="false" />
   </category>
 </settings>

@@ -14,7 +14,9 @@ thumbnails = xbmc.translatePath(os.path.join(home, 'resources', 'thumbnails'))
 settings_icon = os.path.join(thumbnails, 'settings.png')
 ms_icon = os.path.join(thumbnails, 'mediashare.png')
 
-baseurl = 'https://raw.githubusercontent.com/thanh51/repository.thanh51/master/PlaylistHDplay.m3u'
+url_1 = 'https://raw.githubusercontent.com/thanh51/repository.thanh51/master/PlaylistHDplay.m3u'
+
+url_2 = 'http://textuploader.com/d544e/raw'
 
 # If not exist, install repository.thanhnguyenphu
 # Nếu chưa có, cài repository.thanhnguyenphu
@@ -55,7 +57,12 @@ def get_categories():
 	add_dir('[COLOR yellow][B]Go to [/B][/COLOR][COLOR blue][B]MediaShare[/B][/COLOR]', 'plugin://plugin.video.tnp.mediashare', None, ms_icon, fanart)
 	add_dir('[COLOR lime][B]Cài Đặt [/B][/COLOR][B]và [/B][COLOR cyan][B]Tự Động Xoá Cache[/B][/COLOR]', 'AddonSettings', 1, settings_icon, fanart)
 
-	content = make_request(baseurl)
+	if urllib.urlopen(url_1).getcode() == 200:
+		addon_log('URL: '+url_1)
+		content = make_request(url_1)
+	else:
+		addon_log('URL: '+url_2)
+		content = make_request(url_2)
 
 	if '#EXTINF' in content:
 		m3u_regex = '#(.+?),(.+)\s*(.+)\s*'
