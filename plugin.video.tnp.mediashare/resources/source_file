@@ -1,8 +1,8 @@
 [ 
-{"url": "http://textuploader.com/5w282/raw", "thumbnail": "https://s10.postimg.org/onthd374p/allinone.jpg", "fanart": "https://s16.postimg.org/rq7lm1ted/fanart.jpg", "title": "[COLOR red][B]ALL IN ONE[/B][/COLOR]"},
-{"url": "http://textuploader.com/53q1p/raw", "thumbnail": "https://s21.postimg.org/ql980cn6f/hdiptv.png", "fanart": "https://s16.postimg.org/rq7lm1ted/fanart.jpg", "title": "[COLOR lime][B]IPTV HD[/B][/COLOR]"},
-{"url": "http://textuploader.com/d5lxs/raw", "thumbnail": "https://s15.postimg.org/xnh6bmg57/p2p.png", "fanart": "https://s16.postimg.org/rq7lm1ted/fanart.jpg", "title": "[COLOR lime][B]Sports (P2P)[/B][/COLOR]"},
-{"url": "http://textuploader.com/d5lll/raw", "thumbnail": "https://s17.postimg.org/otb2funin/iptvworld.jpg", "fanart": "https://s16.postimg.org/rq7lm1ted/fanart.jpg", "title": "[COLOR lime][B]IPTV WORLD[/B][/COLOR]"},
-{"url": "http://textuploader.com/5wvhg/raw", "thumbnail": "https://s9.postimg.org/hhykddu9r/adult.jpg", "fanart": "https://s16.postimg.org/rq7lm1ted/fanart.jpg", "title": "[COLOR magenta][B]ADULTS 18+[/B][/COLOR]"}
+{"url": "http://textuploader.com/5w282/raw", "thumbnail": "allinone.png", "title": "[COLOR red][B]ALL-IN-ONE[/B][/COLOR]"},
+{"url": "http://textuploader.com/53q1p/raw", "thumbnail": "iptvhd.png", "title": "[COLOR lime][B]IPTV HD[/B][/COLOR]"},
+{"url": "http://textuploader.com/d5lxs/raw", "thumbnail": "p2p.png", "title": "[COLOR lime][B]Sports (P2P)[/B][/COLOR]"},
+{"url": "http://textuploader.com/d5lll/raw", "thumbnail": "iptvworld.png", "title": "[COLOR lime][B]IPTV WORLD[/B][/COLOR]"},
+{"url": "http://textuploader.com/5wvhg/raw", "thumbnail": "adults.png", "title": "[COLOR magenta][B]ADULTS 18+[/B][/COLOR]"}
 ]
 

@@ -53,8 +53,9 @@ favorites = os.path.join(profile, 'favorites')
 history = os.path.join(profile, 'history')
 REV = os.path.join(profile, 'list_revision')
 icon = os.path.join(home, 'icon.png')
-hdpicon = os.path.join(home, 'resources', 'thumbnails', 'hdplay.png')
-settingsicon = os.path.join(home, 'resources', 'thumbnails', 'settings.png')
+logos = os.path.join(home, 'resources', 'thumbnails')
+hdpicon = os.path.join(logos, 'hdplay.png')
+settingsicon = os.path.join(logos, 'settings.png')
 FANART = os.path.join(home, 'fanart.jpg')
 source_file = os.path.join(home, 'resources', 'source_file')
 functions_dir = profile
@@ -178,7 +179,7 @@ def getSources():
                                 credits = ''
                                 genre = ''
                                 if i.has_key('thumbnail'):
-                                    thumb = i['thumbnail']
+                                    thumb = os.path.join(logos,i['thumbnail'])
                                 if i.has_key('fanart'):
                                     fanart = i['fanart']
                                 if i.has_key('description'):
