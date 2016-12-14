@@ -1,6 +1,6 @@
 [ 
-{"url": "http://textuploader.com/5w282/raw", "thumbnail": "allinone.png", "title": "[COLOR red][B]ALL-IN-ONE[/B][/COLOR]"},
-{"url": "http://textuploader.com/d5lll/raw", "thumbnail": "iptvworld.png", "title": "[COLOR lime][B]IPTV WORLD[/B][/COLOR]"},
-{"url": "http://textuploader.com/5wvhg/raw", "thumbnail": "adults.png", "title": "[COLOR magenta][B]ADULTS 18+[/B][/COLOR]"}
+{"url": "https://raw.githubusercontent.com/thanh51/repository.thanh51/master/AllInOne.xml", "thumbnail": "allinone.png", "title": "[COLOR red][B]ALL-IN-ONE[/B][/COLOR]"},
+{"url": "https://raw.githubusercontent.com/thanh51/repository.thanh51/master/IPTVwold.xml", "thumbnail": "iptvworld.png", "title": "[COLOR lime][B]IPTV WORLD[/B][/COLOR]"},
+{"url": "https://raw.githubusercontent.com/thanh51/repository.thanh51/master/ADULTTH.xml", "thumbnail": "adults.png", "title": "[COLOR magenta][B]ADULTS 18+[/B][/COLOR]"}
 ]
 

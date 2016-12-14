@@ -33,7 +33,7 @@
 
 <addon id="plugin.video.tnp.mediashare"
        name="[COLOR blue][B]MediaShare[/B][/COLOR]"
-       version="1.0.7"
+       version="1.0.8"
        provider-name="Shani 2.7.0, thanh51">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
