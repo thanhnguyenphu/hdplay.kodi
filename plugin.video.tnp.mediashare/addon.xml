@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="plugin.video.tnp.mediashare"
        name="[COLOR blue][B]MediaShare[/B][/COLOR]"
-       version="1.0.6"
+       version="1.0.7"
        provider-name="Shani 2.7.0, thanh51">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
@@ -26,7 +26,7 @@
   <extension point="xbmc.addon.metadata">
     <summary>Kênh giải trí tổng hợp.</summary>
     <description>thanh51 chỉnh lý và tổng hợp các kênh.</description>
-    <disclaimer>[COLOR orangered]Các kênh được phổ biến và chia sẻ miễn phí trên internet. Chúng tôi không chịu mọi trách nhiệm pháp lý.[/COLOR]</disclaimer>
+    <disclaimer>[COLOR orangered]Các kênh được phổ biến và chia sẻ miễn phí trên internet. Chúng tôi không chịu bất kỳ trách nhiệm pháp lý.[/COLOR]</disclaimer>
     <platform>all</platform>
   </extension>
 </addon>

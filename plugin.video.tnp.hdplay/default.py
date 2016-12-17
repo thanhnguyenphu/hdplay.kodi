@@ -126,10 +126,13 @@ def clear_cache():  #### plugin.video.xbmchubmaintenance ####
 						except:
 							pass
 					for d in dirs:
-						try:
-							shutil.rmtree(os.path.join(root, d))
-						except:
+						if any(x in d for x in ['subs', 'xshare', 'temp']):
 							pass
+						else:
+							try:
+								shutil.rmtree(os.path.join(root, d))
+							except:
+								pass
 	except:
 		pass
 
@@ -146,7 +149,7 @@ def add_dir(name, url, mode, iconimage, fanart):
 	liz.setProperty("Fanart_Image", fanart)
 	if 'plugin' in url:
 		u = url
-	ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
+	ok=xbmcplugin.addDirectoryItem(int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
 	return ok
 
 def add_link(name, url, iconimage, fanart):
@@ -155,7 +158,7 @@ def add_link(name, url, iconimage, fanart):
 	liz.setInfo(type="Video", infoLabels={"Title": name})
 	liz.setProperty("Fanart_Image", fanart)
 	liz.setProperty('IsPlayable', 'true')
-	ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz)
+	ok=xbmcplugin.addDirectoryItem(int(sys.argv[1]),url=u,listitem=liz)
 
 def get_params():
 	param=[]

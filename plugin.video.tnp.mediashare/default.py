@@ -141,10 +141,13 @@ def clear_cache():  #### plugin.video.xbmchubmaintenance ####
                         except:
                             pass
                     for d in dirs:
-                        try:
-                            shutil.rmtree(os.path.join(root, d))
-                        except:
+                        if any(x in d for x in ['subs', 'xshare', 'temp']):
                             pass
+                        else:
+                            try:
+                                shutil.rmtree(os.path.join(root, d))
+                            except:
+                                pass
     except:
         pass
 
