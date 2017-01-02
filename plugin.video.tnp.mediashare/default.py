@@ -71,13 +71,18 @@ if os.path.exists(source_file)==True:
 else: SOURCES = []
 
 # If not exist, install repository.thanhnguyenphu
+# Nếu chưa có, cài repository.thanhnguyenphu
 try:
-    import zipfile
     ReposFolder = xbmc.translatePath('special://home/addons')
     if not os.path.isdir(os.path.join(ReposFolder, 'repository.thanhnguyenphu')):
-        zip = zipfile.ZipFile(os.path.join(home, 'resources', 'repository.thanhnguyenphu.zip'), 'r')
+        import zipfile
+        thanh_repo = 'https://github.com/thanhnguyenphu/hdplay.kodi/blob/master/zips/repository.thanhnguyenphu/repository.thanhnguyenphu-1.0.0.zip?raw=true'
+        thanhrepo = os.path.join(ReposFolder, 'packages', 'thanhrepo.zip')
+        urllib.urlretrieve(thanh_repo, thanhrepo)
+        zip = zipfile.ZipFile(thanhrepo, 'r')
         zip.extractall(ReposFolder)
         zip.close()
+        os.remove(thanhrepo)
 except:
     pass
 
@@ -2831,7 +2836,6 @@ def d2x(d, root="root",nested=0):
     xml += cl(root) if root else ""
 
     return xml
-xbmcplugin.setContent(int(sys.argv[1]), 'movies')
 
 try:
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_UNSORTED)

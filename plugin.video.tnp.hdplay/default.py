@@ -1,16 +1,16 @@
 ﻿#!/usr/bin/python
 #coding=utf-8
 
-import os, re, urllib, urllib2, shutil, zipfile
+import os, re, urllib, urllib2, shutil
 import xbmc, xbmcplugin, xbmcgui, xbmcaddon
 
 addon = xbmcaddon.Addon(id='plugin.video.tnp.hdplay')
 addon_version = addon.getAddonInfo('version')
 
-home = addon.getAddonInfo('path')
-icon = xbmc.translatePath(os.path.join(home, 'icon.png'))
-fanart = xbmc.translatePath(os.path.join(home, 'fanart.jpg'))
-thumbnails = xbmc.translatePath(os.path.join(home, 'resources', 'thumbnails'))
+home = xbmc.translatePath(addon.getAddonInfo('path').decode('utf-8'))
+icon = os.path.join(home, 'icon.png')
+fanart = os.path.join(home, 'fanart.jpg')
+thumbnails = os.path.join(home, 'resources', 'thumbnails')
 settings_icon = os.path.join(thumbnails, 'settings.png')
 ms_icon = os.path.join(thumbnails, 'mediashare.png')
 
@@ -18,14 +18,21 @@ url_1 = 'https://raw.githubusercontent.com/thanh51/repository.thanh51/master/Pla
 
 url_2 = 'http://textuploader.com/d544e/raw'
 
+subtitle = 'https://raw.githubusercontent.com/thanh51/repository.thanh51/master/mungnammoi.srt'
+
 # If not exist, install repository.thanhnguyenphu
 # Nếu chưa có, cài repository.thanhnguyenphu
 try:
 	ReposFolder = xbmc.translatePath('special://home/addons')
 	if not os.path.isdir(os.path.join(ReposFolder, 'repository.thanhnguyenphu')):
-		zip = zipfile.ZipFile(os.path.join(home, 'resources', 'repository.thanhnguyenphu.zip'), 'r')
+		import zipfile
+		thanh_repo = 'https://github.com/thanhnguyenphu/hdplay.kodi/blob/master/zips/repository.thanhnguyenphu/repository.thanhnguyenphu-1.0.0.zip?raw=true'
+		thanhrepo = os.path.join(ReposFolder, 'packages', 'thanhrepo.zip')
+		urllib.urlretrieve(thanh_repo, thanhrepo)
+		zip = zipfile.ZipFile(thanhrepo, 'r')
 		zip.extractall(ReposFolder)
 		zip.close()
+		os.remove(thanhrepo)
 except:
 	pass
 
@@ -69,9 +76,17 @@ def get_categories():
 		m3u_thumb_regex = 'tvg-logo=[\'"](.*?)[\'"]'
 		group_title_regex = 'group-title=[\'"](.*?)[\'"]'
 		match = re.compile(m3u_regex).findall(content)
-		for thumb, title, link in match:
-			if 'tvg-logo' in thumb:
-				thumb = re.compile(m3u_thumb_regex).findall(str(thumb))[0].strip()
+		for group_logo, title, link in match:
+			if 'group-title' in group_logo:
+				group = re.compile(group_title_regex).findall(str(group_logo))[0].strip()
+				if len(group) > 0:
+					group_title = ('%s%s%s'%('[COLOR blue][', group, '][/COLOR] '))
+				else:
+					group_title = ''
+			else:
+				group_title = ''
+			if 'tvg-logo' in group_logo:
+				thumb = re.compile(m3u_thumb_regex).findall(str(group_logo))[0].strip()
 				if len(thumb) > 0:
 					if thumb.startswith('http'):
 						thumb = thumb.replace(' ', '%20')
@@ -83,7 +98,7 @@ def get_categories():
 				thumb = icon
 			title = title.strip()
 			link = link.strip()
-			add_link(title, link, thumb, fanart)
+			add_link(('%s%s'%(group_title, title)), link, thumb, fanart)
 
 	else:
 		content = ''.join(content.splitlines()).replace('\t', '')
@@ -139,6 +154,12 @@ def clear_cache():  #### plugin.video.xbmchubmaintenance ####
 def resolve_url(url):
 	item = xbmcgui.ListItem(path=url)
 	xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
+	if len(subtitle) > 0:
+		try:
+			xbmc.sleep(3000)
+			xbmc.Player().setSubtitles(subtitle)
+		except:
+			pass
 	return
 
 def add_dir(name, url, mode, iconimage, fanart):
@@ -154,11 +175,13 @@ def add_dir(name, url, mode, iconimage, fanart):
 
 def add_link(name, url, iconimage, fanart):
 	u=sys.argv[0]+"?url="+urllib.quote_plus(url)+"&mode=2"
+	ok=True
 	liz=xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=iconimage)
 	liz.setInfo(type="Video", infoLabels={"Title": name})
 	liz.setProperty("Fanart_Image", fanart)
 	liz.setProperty('IsPlayable', 'true')
 	ok=xbmcplugin.addDirectoryItem(int(sys.argv[1]),url=u,listitem=liz)
+	return ok
 
 def get_params():
 	param=[]
@@ -176,8 +199,6 @@ def get_params():
 					if (len(splitparams))==2:
 							param[splitparams[0]]=splitparams[1]
 	return param
-
-xbmcplugin.setContent(int(sys.argv[1]), 'movies')
 
 params = get_params()
 
