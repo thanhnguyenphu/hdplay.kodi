@@ -7,6 +7,7 @@ import xbmc, xbmcplugin, xbmcgui, xbmcaddon
 addon = xbmcaddon.Addon(id='plugin.video.tnp.hdplay')
 addon_version = addon.getAddonInfo('version')
 
+kodiVersion = int(xbmc.getInfoLabel("System.BuildVersion")[:2])
 home = xbmc.translatePath(addon.getAddonInfo('path').decode('utf-8'))
 icon = os.path.join(home, 'icon.png')
 fanart = os.path.join(home, 'fanart.jpg')
@@ -26,18 +27,28 @@ try:
 	ReposFolder = xbmc.translatePath('special://home/addons')
 	if not os.path.isdir(os.path.join(ReposFolder, 'repository.thanhnguyenphu')):
 		import zipfile
-		thanh_repo = 'https://github.com/thanhnguyenphu/hdplay.kodi/blob/master/zips/repository.thanhnguyenphu/repository.thanhnguyenphu-1.0.0.zip?raw=true'
+		thanh_repo = 'https://github.com/thanhnguyenphu/hdplay.kodi/raw/master/zips/repository.thanhnguyenphu/repository.thanhnguyenphu-1.0.0.zip'
 		thanhrepo = os.path.join(ReposFolder, 'packages', 'thanhrepo.zip')
 		urllib.urlretrieve(thanh_repo, thanhrepo)
 		zip = zipfile.ZipFile(thanhrepo, 'r')
 		zip.extractall(ReposFolder)
 		zip.close()
 		os.remove(thanhrepo)
+		if kodiVersion > 16:
+			from sqlite3 import dbapi2 as db_lib
+			set_it = 1
+			db_path = xbmc.translatePath(os.path.join('special://profile', 'Database', 'Addons27.db'))
+			conn = db_lib.connect(db_path)
+			conn.execute('REPLACE INTO installed (addonID,enabled) VALUES(?,?)', ('repository.thanhnguyenphu' ,set_it, ))
+			conn.commit()
 except:
 	pass
 
 def addon_log(string):
-	xbmc.log("[plugin.video.tnp.hdplay-%s]: %s" %(addon_version, string))
+	if kodiVersion < 17:
+		xbmc.log("[plugin.video.tnp.hdplay-%s]: %s" % (addon_version, string))
+	else:
+		xbmc.log("[plugin.video.tnp.hdplay-%s]: %s" % (addon_version, string), xbmc.LOGNOTICE)
 
 def make_request(url, headers=None):
 	if headers is None:
@@ -61,7 +72,7 @@ def make_request(url, headers=None):
 
 def get_categories():
 
-	add_dir('[COLOR yellow][B]Go to [/B][/COLOR][COLOR blue][B]MediaShare[/B][/COLOR]', 'plugin://plugin.video.tnp.mediashare', None, ms_icon, fanart)
+	add_dir('[COLOR yellow][B]Go to [/B][/COLOR][COLOR blue][B]MediaShare Add-on[/B][/COLOR]', 'plugin://plugin.video.tnp.mediashare', None, ms_icon, fanart)
 	add_dir('[COLOR lime][B]Cài Đặt [/B][/COLOR][B]và [/B][COLOR cyan][B]Tự Động Xoá Cache[/B][/COLOR]', 'AddonSettings', 1, settings_icon, fanart)
 
 	if urllib.urlopen(url_1).getcode() == 200:
@@ -221,12 +232,6 @@ except:
 
 if mode == None:
 	get_categories()
-	if addon.getSetting('ViewMode') == 'List':
-		xbmc.executebuiltin('Container.SetViewMode(50)')
-	elif addon.getSetting('ViewMode') == 'Thumbnail':
-		xbmc.executebuiltin('Container.SetViewMode(500)')
-	else:
-		xbmc.executebuiltin('Container.SetViewMode(501)')
 
 elif mode == 1:
 	addon_settings()

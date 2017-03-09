@@ -60,6 +60,8 @@ FANART = os.path.join(home, 'fanart.jpg')
 source_file = os.path.join(home, 'resources', 'source_file')
 functions_dir = profile
 
+kodiVersion = int(xbmc.getInfoLabel("System.BuildVersion")[:2])
+
 communityfiles = os.path.join(profile, 'LivewebTV')
 downloader = downloader.SimpleDownloader()
 debug = addon.getSetting('debug')
@@ -76,19 +78,29 @@ try:
     ReposFolder = xbmc.translatePath('special://home/addons')
     if not os.path.isdir(os.path.join(ReposFolder, 'repository.thanhnguyenphu')):
         import zipfile
-        thanh_repo = 'https://github.com/thanhnguyenphu/hdplay.kodi/blob/master/zips/repository.thanhnguyenphu/repository.thanhnguyenphu-1.0.0.zip?raw=true'
+        thanh_repo = 'https://github.com/thanhnguyenphu/hdplay.kodi/raw/master/zips/repository.thanhnguyenphu/repository.thanhnguyenphu-1.0.0.zip'
         thanhrepo = os.path.join(ReposFolder, 'packages', 'thanhrepo.zip')
         urllib.urlretrieve(thanh_repo, thanhrepo)
         zip = zipfile.ZipFile(thanhrepo, 'r')
         zip.extractall(ReposFolder)
         zip.close()
         os.remove(thanhrepo)
+        if kodiVersion > 16:
+            from sqlite3 import dbapi2 as db_lib
+            set_it = 1
+            db_path = xbmc.translatePath(os.path.join('special://profile', 'Database', 'Addons27.db'))
+            conn = db_lib.connect(db_path)
+            conn.execute('REPLACE INTO installed (addonID,enabled) VALUES(?,?)', ('repository.thanhnguyenphu' ,set_it, ))
+            conn.commit()
 except:
     pass
 
 def addon_log(string):
     if debug == 'true':
-        xbmc.log("[addon.tnp.mediashare-%s]: %s" %(addon_version, string))
+        if kodiVersion < 17:
+            xbmc.log("[addon.tnp.mediashare-%s]: %s" % (addon_version, string))
+        else:
+            xbmc.log("[addon.tnp.mediashare-%s]: %s" % (addon_version, string), xbmc.LOGNOTICE)
 
 
 def makeRequest(url, headers=None):
@@ -158,7 +170,7 @@ def clear_cache():  #### plugin.video.xbmchubmaintenance ####
 
 def getSources():
 
-        addDir('[COLOR yellow][B]Go to [COLOR blue][B]HDPlay[/B][/COLOR]','plugin://plugin.video.tnp.hdplay',None,hdpicon,FANART,'','','','')
+        addDir('[COLOR yellow][B]Go to [COLOR blue][B]HDPlay Add-on[/B][/COLOR]','plugin://plugin.video.tnp.hdplay',None,hdpicon,FANART,'','','','')
         addDir('[COLOR cyan][B]Add-on Settings [/B][/COLOR][B]and [/B][COLOR lime][B]Auto Clear Cache[/B][/COLOR]','AddonSettings',99,settingsicon,FANART,'','','','')
 
         try:
@@ -438,6 +450,9 @@ def getData(url,fanart, data=None):
                 if lcount>1: linkedUrl=''
 
                 name = channel('name')[0].string
+                try:
+                    name=processPyFunction(name)
+                except: pass                
                 thumbnail = channel('thumbnail')[0].string
                 if thumbnail == None:
                     thumbnail = ''
@@ -487,7 +502,7 @@ def getData(url,fanart, data=None):
                     if linkedUrl=='':
                         addDir(name.encode('utf-8', 'ignore'),url.encode('utf-8'),2,thumbnail,fanArt,desc,genre,date,credits,True)
                     else:
-                        xbmc.log(str(linkedUrl))
+                        #print linkedUrl
                         addDir(name.encode('utf-8'),linkedUrl.encode('utf-8'),1,thumbnail,fanArt,desc,genre,date,None,'source')
                 except:
                     addon_log('There was a problem adding directory from getData(): '+name.encode('utf-8', 'ignore'))
@@ -553,6 +568,9 @@ def getChannelItems(name,url,fanart):
             fanArt = fanart
         for channel in channel_list('subchannel'):
             name = channel('name')[0].string
+            try:
+                name=processPyFunction(name)
+            except: pass
             try:
                 thumbnail = channel('thumbnail')[0].string
                 if thumbnail == None:
@@ -635,6 +653,10 @@ def getItems(items,fanart,dontLink=False):
                 name = item('title')[0].string
                 if name is None:
                     name = 'unknown?'
+                try:
+                    name=processPyFunction(name)
+                except: pass
+                
             except:
                 addon_log('Name Error')
                 name = ''
@@ -1269,7 +1291,7 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
                             link=javascriptUnEscape(link)
                         else:
                             link=m['page']
-                if '$pyFunction:playmedia(' in m['expres'] or 'ActivateWindow'  in m['expres']  or '$PLAYERPROXY$=' in url  or  any(x in url for x in g_ignoreSetResolved):
+                if '$pyFunction:playmedia(' in m['expres'] or 'ActivateWindow'  in m['expres'] or 'RunPlugin'  in m['expres']  or '$PLAYERPROXY$=' in url  or  any(x in url for x in g_ignoreSetResolved):
                     setresolved=False
                 if  '$doregex' in m['expres']:
                     m['expres']=getRegexParsed(regexs, m['expres'],cookieJar,recursiveCall=True,cachedPages=cachedPages)
@@ -1288,7 +1310,7 @@ def getRegexParsed(regexs, url,cookieJar=None,forCookieJarOnly=False,recursiveCa
                             val=doEval(m['expres'].split('$pyFunction:')[1],link,cookieJar,m)
                         else:
                             val=doEvalFunction(m['expres'],link,cookieJar,m)
-                        if 'ActivateWindow' in m['expres']: return
+                        if 'ActivateWindow' in m['expres'] or 'RunPlugin' in m['expres']  : return '',False
                         if forCookieJarOnly:
                             return cookieJar# do nothing
                         if 'listrepeat' in m:
@@ -1448,6 +1470,9 @@ def getConfiguredProxy():
         
 def playmediawithproxy(media_url, name, iconImage,proxyip,port, proxyuser=None, proxypass=None): #jairox
 
+    if media_url==None or media_url=='':
+        xbmc.executebuiltin("XBMC.Notification(MediaShare,Unable to play empty Url,5000,"+icon+")")
+        return
     progress = xbmcgui.DialogProgress()
     progress.create('Progress', 'Playing with custom proxy')
     progress.update( 10, "", "setting proxy..", "" )
@@ -1465,27 +1490,41 @@ def playmediawithproxy(media_url, name, iconImage,proxyip,port, proxyuser=None, 
         else:
             setKodiProxy( proxyip + ':' + port + ':0')
 
-        #print 'proxy setting complete', getConfiguredProxy()
+        print 'proxy setting complete playing',media_url
         proxyset=True
         progress.update( 80, "", "setting proxy complete, now playing", "" )
         
-        progress.close()
-        progress=None
+
         import  CustomPlayer
         player = CustomPlayer.MyXBMCPlayer()
+        player.pdialogue==progress
         listitem = xbmcgui.ListItem( label = str(name), iconImage = iconImage, thumbnailImage = xbmc.getInfoImage( "ListItem.Thumb" ), path=media_url )
         player.play( media_url,listitem)
         xbmc.sleep(1000)
-        while player.is_active:
-            xbmc.sleep(200)
+        #while player.is_active:
+        #    xbmc.sleep(200)
+        import time
+        beforestart=time.time()
+        try:
+            while player.is_active:
+                xbmc.sleep(1000)       
+                if player.urlplayed==False and time.time()-beforestart>12:
+                    print 'failed!!!'
+                    xbmc.executebuiltin("XBMC.Notification(MediaShare,Unable to play check proxy,5000,"+icon+")")
+                    break
+                #xbmc.sleep(1000)
+        except: pass
+
+        progress.close()
+        progress=None
     except:
         traceback.print_exc()
     if progress:
         progress.close()
     if proxyset:
-#        print 'now resetting the proxy back'
+        print 'now resetting the proxy back'
         setKodiProxy(existing_proxy)
-#        print 'reset here'
+        print 'reset here'
     return ''
 
 
@@ -2535,9 +2574,9 @@ def addDir(name,url,mode,iconimage,fanart,description,genre,date,credits,showcon
                     %(sys.argv[0], urllib.quote_plus(reg_url), regexs)
                     )
                 contextMenu.append(('[COLOR yellow]!!update[/COLOR]','XBMC.RunPlugin(%s)' %fav_params2))
-            '''if not name in FAV:
+            if not name in FAV:
                 contextMenu.append(('Add to MediaShare Favorites','XBMC.RunPlugin(%s?mode=5&name=%s&url=%s&iconimage=%s&fanart=%s&fav_mode=%s)'
-                         %(sys.argv[0], urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(iconimage), urllib.quote_plus(fanart), mode)))'''
+                         %(sys.argv[0], urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(iconimage), urllib.quote_plus(fanart), mode)))
             liz.addContextMenuItems(contextMenu)
         ok=xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=liz,isFolder=True)
         return ok
@@ -2714,7 +2753,7 @@ def addLink(url,name,iconimage,fanart,description,genre,date,showcontext,playlis
                 liz.setProperty('IsPlayable', 'true')
         else:
             addon_log( 'NOT setting isplayable'+url)
-        '''if showcontext:
+        if showcontext:
             #contextMenu = []
             if showcontext == 'fav':
                 contextMenu.append(
@@ -2737,7 +2776,7 @@ def addLink(url,name,iconimage,fanart,description,genre,date,showcontext,playlis
                 if regexs:
                     fav_params += "&regexs="+regexs
                 contextMenu.append(('Add to MediaShare Favorites','XBMC.RunPlugin(%s)' %fav_params))
-            liz.addContextMenuItems(contextMenu)'''
+            liz.addContextMenuItems(contextMenu)
         try:
             if not playlist is None:
                 if addon.getSetting('add_playlist') == "false":
@@ -2756,7 +2795,10 @@ def addLink(url,name,iconimage,fanart,description,genre,date,showcontext,playlis
 
         
 def playsetresolved(url,name,iconimage,setresolved=True,reg=None):
-    print url
+    print 'playsetresolved',url,setresolved
+    if url==None: 
+        xbmcplugin.endOfDirectory(int(sys.argv[1]))
+        return
     if setresolved:
         setres=True
         if '$$LSDirect$$' in url:
@@ -3153,28 +3195,29 @@ elif mode==17 or mode==117:
         xbmcplugin.endOfDirectory(int(sys.argv[1]))
     else:
         url,setresolved = getRegexParsed(regexs, url)
-        #print repr(url),setresolved,'imhere'
-        if url:
-            if '$PLAYERPROXY$=' in url:
-                url,proxy=url.split('$PLAYERPROXY$=')
-                print 'proxy',proxy
-                #Jairox mod for proxy auth
-                proxyuser = None
-                proxypass = None
-                if len(proxy) > 0 and '@' in proxy:
-                    proxy = proxy.split(':')
-                    proxyuser = proxy[0]
-                    proxypass = proxy[1].split('@')[0]
-                    proxyip = proxy[1].split('@')[1]
-                    port = proxy[2]
-                else:
-                    proxyip,port=proxy.split(':')
+        print repr(url),setresolved,'imhere'
+        if not (regexs and 'notplayable' in regexs and not url):        
+            if url:
+                if '$PLAYERPROXY$=' in url:
+                    url,proxy=url.split('$PLAYERPROXY$=')
+                    print 'proxy',proxy
+                    #Jairox mod for proxy auth
+                    proxyuser = None
+                    proxypass = None
+                    if len(proxy) > 0 and '@' in proxy:
+                        proxy = proxy.split(':')
+                        proxyuser = proxy[0]
+                        proxypass = proxy[1].split('@')[0]
+                        proxyip = proxy[1].split('@')[1]
+                        port = proxy[2]
+                    else:
+                        proxyip,port=proxy.split(':')
 
-                playmediawithproxy(url,name,iconimage,proxyip,port, proxyuser,proxypass) #jairox
+                    playmediawithproxy(url,name,iconimage,proxyip,port, proxyuser,proxypass) #jairox
+                else:
+                    playsetresolved(url,name,iconimage,setresolved,regexs)
             else:
-                playsetresolved(url,name,iconimage,setresolved,regexs)
-        else:
-            xbmc.executebuiltin("XBMC.Notification(MediaShare,Failed to extract regex. - "+"this"+",4000,"+icon+")")
+                xbmc.executebuiltin("XBMC.Notification(MediaShare,Failed to extract regex. - "+"this"+",4000,"+icon+")")
 elif mode==18:
     addon_log("youtubedl")
     try:
