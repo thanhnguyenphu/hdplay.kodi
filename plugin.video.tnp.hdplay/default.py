@@ -36,11 +36,12 @@ try:
 		os.remove(thanhrepo)
 		if kodiVersion > 16:
 			from sqlite3 import dbapi2 as db_lib
-			set_it = 1
 			db_path = xbmc.translatePath(os.path.join('special://profile', 'Database', 'Addons27.db'))
 			conn = db_lib.connect(db_path)
-			conn.execute('REPLACE INTO installed (addonID,enabled) VALUES(?,?)', ('repository.thanhnguyenphu' ,set_it, ))
+			conn.execute('REPLACE INTO installed (addonID,enabled) VALUES(?,?)', ('repository.thanhnguyenphu' , 1,))
 			conn.commit()
+			xbmcgui.Dialog().ok('HDPlay', '[COLOR magenta]Vui lòng khởi động lại Kodi để kích hoạt (enable) repository.thanhnguyenphu đã được cài bởi HDPlay add-on.[/COLOR]')
+			sys.exit(0)
 except:
 	pass
 
@@ -89,16 +90,18 @@ def get_categories():
 		match = re.compile(m3u_regex).findall(content)
 		for group_logo, title, link in match:
 			if 'group-title' in group_logo:
-				group = re.compile(group_title_regex).findall(str(group_logo))[0].strip()
+				group = re.compile(group_title_regex).findall(str(group_logo))
 				if len(group) > 0:
+					group = group[0].strip()
 					group_title = ('%s%s%s'%('[COLOR blue][', group, '][/COLOR] '))
 				else:
 					group_title = ''
 			else:
 				group_title = ''
 			if 'tvg-logo' in group_logo:
-				thumb = re.compile(m3u_thumb_regex).findall(str(group_logo))[0].strip()
+				thumb = re.compile(m3u_thumb_regex).findall(str(group_logo))
 				if len(thumb) > 0:
+					thumb = thumb[0].strip()
 					if thumb.startswith('http'):
 						thumb = thumb.replace(' ', '%20')
 					else:
@@ -119,11 +122,14 @@ def get_categories():
 			link = ""
 			thumb = ""
 			if '<title>' in item:
-				title = re.compile('<title>(.+?)</title>').findall(item)[0].strip()
+				title = re.compile('<title>(.+?)</title>').findall(item)
+				title = title[0].strip()
 			if '<link>' in item:
-				link = re.compile('<link>(.*?)</link>').findall(item)[0].strip()
+				link = re.compile('<link>(.*?)</link>').findall(item)
+				link = link[0].strip()
 			if '<thumbnail>' in item:
-				thumb = re.compile('<thumbnail>(.*?)</thumbnail>').findall(item)[0].strip()
+				thumb = re.compile('<thumbnail>(.*?)</thumbnail>').findall(item)
+				thumb = thumb[0].strip()
 			if len(thumb) > 0:
 				if thumb.startswith('http'):
 					thumb = thumb.replace(' ', '%20')

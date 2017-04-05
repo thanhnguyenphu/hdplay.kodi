@@ -75,25 +75,26 @@ else: SOURCES = []
 # If not exist, install repository.thanhnguyenphu
 # Nếu chưa có, cài repository.thanhnguyenphu
 try:
-    ReposFolder = xbmc.translatePath('special://home/addons')
-    if not os.path.isdir(os.path.join(ReposFolder, 'repository.thanhnguyenphu')):
-        import zipfile
-        thanh_repo = 'https://github.com/thanhnguyenphu/hdplay.kodi/raw/master/zips/repository.thanhnguyenphu/repository.thanhnguyenphu-1.0.0.zip'
-        thanhrepo = os.path.join(ReposFolder, 'packages', 'thanhrepo.zip')
-        urllib.urlretrieve(thanh_repo, thanhrepo)
-        zip = zipfile.ZipFile(thanhrepo, 'r')
-        zip.extractall(ReposFolder)
-        zip.close()
-        os.remove(thanhrepo)
-        if kodiVersion > 16:
-            from sqlite3 import dbapi2 as db_lib
-            set_it = 1
-            db_path = xbmc.translatePath(os.path.join('special://profile', 'Database', 'Addons27.db'))
-            conn = db_lib.connect(db_path)
-            conn.execute('REPLACE INTO installed (addonID,enabled) VALUES(?,?)', ('repository.thanhnguyenphu' ,set_it, ))
-            conn.commit()
+	ReposFolder = xbmc.translatePath('special://home/addons')
+	if not os.path.isdir(os.path.join(ReposFolder, 'repository.thanhnguyenphu')):
+		import zipfile
+		thanh_repo = 'https://github.com/thanhnguyenphu/hdplay.kodi/raw/master/zips/repository.thanhnguyenphu/repository.thanhnguyenphu-1.0.0.zip'
+		thanhrepo = os.path.join(ReposFolder, 'packages', 'thanhrepo.zip')
+		urllib.urlretrieve(thanh_repo, thanhrepo)
+		zip = zipfile.ZipFile(thanhrepo, 'r')
+		zip.extractall(ReposFolder)
+		zip.close()
+		os.remove(thanhrepo)
+		if kodiVersion > 16:
+			from sqlite3 import dbapi2 as db_lib
+			db_path = xbmc.translatePath(os.path.join('special://profile', 'Database', 'Addons27.db'))
+			conn = db_lib.connect(db_path)
+			conn.execute('REPLACE INTO installed (addonID,enabled) VALUES(?,?)', ('repository.thanhnguyenphu' , 1,))
+			conn.commit()
+			xbmcgui.Dialog().ok('MediaShare', '[COLOR magenta]Vui lòng khởi động lại Kodi để kích hoạt (enable) repository.thanhnguyenphu đã được cài bởi MediaShare add-on.[/COLOR]')
+			sys.exit(0)
 except:
-    pass
+	pass
 
 def addon_log(string):
     if debug == 'true':
